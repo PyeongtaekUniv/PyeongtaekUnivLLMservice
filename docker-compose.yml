@@ -1,0 +1,35 @@
+version: '3'
+services:
+  flask:
+    build: ./PTULLM
+    container_name: flask_app
+    restart: always
+    expose:
+      - 5000
+    networks:
+      - webnet
+
+  nextjs:
+    build: ./Chatbot_v2
+    container_name: nextjs_app
+    restart: always
+    ports:
+      - "3000:3000"
+    networks:
+      - webnet
+
+  nginx:
+    image: nginx:latest
+    container_name: nginx_proxy
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - flask
+      - nextjs
+    networks:
+      - webnet
+
+networks:
+  webnet:
